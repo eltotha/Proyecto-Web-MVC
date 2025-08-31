@@ -59,7 +59,7 @@ create table preguntas_opciones (
 create table respuestas(
 
 	id int auto_increment,
-    usario_respueta int,
+    usuario_respuesta int,
     encuesta_id int,
     pregunta_id int,
     respuesta varchar(100),
@@ -85,4 +85,35 @@ create table respuestas_opciones (
     constraint respuestas_opciones_FK2 foreign key(opcion) references preguntas_opciones(id)
 );
 
+-- 1️ Insertar roles
+INSERT INTO roles (id, rol) VALUES
+(1, 'Admin'),
+(2, 'User');
+
+-- 2️ Insertar usuarios
+INSERT INTO usuarios (username, rol, passwd) VALUES
+('admin1', 1, 'passAdmin'),
+('user1', 2, 'passUser'),
+('user2', 2, 'passUser2');
+
+-- 3️ Insertar encuestas
+INSERT INTO encuestas (autor, titulo, descripcion, estado, cierra_en, creado_en) VALUES
+(1, 'Encuesta de Satisfacción', 'Encuesta para medir la satisfacción del cliente', 'Activa', '2025-12-31 23:59:59', NOW()),
+(2, 'Encuesta de Producto', 'Opiniones sobre el nuevo producto', 'Activa', '2025-11-30 23:59:59', NOW());
+
+-- 4️ Insertar preguntas
+INSERT INTO preguntas (encuesta_id, enunciado, tipo_pregunta, obligatorio) VALUES
+(1, '¿Qué tan satisfecho estás con el servicio?', 'Escala', 1),
+(1, '¿Recomendarías nuestro servicio?', 'Sí/No', 1),
+(2, 'Califica el producto del 1 al 5', 'Escala', 1);
+
+-- 5️ Insertar opciones para preguntas cerradas
+INSERT INTO preguntas_opciones (pregunta_id, position, Label, Value) VALUES
+(2, 1, 'Sí', '1'),
+(2, 2, 'No', '0'),
+(3, 1, '1', '1'),
+(3, 2, '2', '2'),
+(3, 3, '3', '3'),
+(3, 4, '4', '4'),
+(3, 5, '5', '5');
 
