@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GestorEncuestas_MVC")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1bd55b3df9633c16aed5e63c739e01d1a5c3c3f3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7e487e1e0f53b7ff81a7d37cae634c1118fe5656")]
 [assembly: System.Reflection.AssemblyProductAttribute("GestorEncuestas_MVC")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GestorEncuestas_MVC")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
