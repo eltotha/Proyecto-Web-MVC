@@ -1,119 +1,142 @@
-drop database if exists Encuestas;
-create database if not exists Encuestas;
-use Encuestas;
+DROP DATABASE IF EXISTS Encuestas;
+CREATE DATABASE IF NOT EXISTS Encuestas;
+USE Encuestas;
 
-create table roles (
-
-	id int unique,
-    rol varchar(10),
-    constraint roles_PK primary key(id)
+-- Tabla de roles
+CREATE TABLE roles (
+    id INT UNIQUE,
+    rol VARCHAR(10),
+    name VARCHAR(255),
+    normalized_name VARCHAR(255),
+    concurrency_stamp VARCHAR(255),
+    CONSTRAINT roles_PK PRIMARY KEY(id)
 );
 
-create table usuarios (
-
-	id int auto_increment,
-    username varchar(20),
-    rol int,
-    passwd varchar(20),
-    constraint id_PK primary key(id),
-    constraint rol_FK foreign key(rol) references roles(id) on update cascade on delete cascade
+-- Tabla de usuarios
+CREATE TABLE usuarios (
+    id INT AUTO_INCREMENT,
+    username VARCHAR(20),
+    normalized_username VARCHAR(255),
+    rol INT,
+    passwd VARCHAR(255),
+    email VARCHAR(255) DEFAULT 'default@email.com',
+    normalized_email VARCHAR(255) DEFAULT 'DEFAULT@EMAIL.COM',
+    email_confirmed BIT DEFAULT 1,
+    phone_number VARCHAR(20) DEFAULT NULL,
+    phone_number_confirmed BIT DEFAULT 0,
+    two_factor_enabled BIT DEFAULT 0,
+    lockout_end DATETIME DEFAULT NULL,
+    lockout_enabled BIT DEFAULT 0,
+    access_failed_count INT DEFAULT 0,
+    security_stamp VARCHAR(255),
+    concurrency_stamp VARCHAR(255),
+    CONSTRAINT id_PK PRIMARY KEY(id),
+    CONSTRAINT rol_FK FOREIGN KEY(rol) REFERENCES roles(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-create table encuestas (
-
-	id int auto_increment,
-    autor int,
-    titulo varchar(50),
-    descripcion varchar(200),
-    estado varchar(20),
-	cierra_en datetime,
-    creado_en datetime,
-	constraint encuestas_PK primary key(id),
-    constraint encuestas_FK foreign key(autor) references usuarios(id)
+-- Tablas de Identity (NECESARIAS)
+CREATE TABLE user_roles (
+    UserId INT NOT NULL,
+    RoleId INT NOT NULL,
+    CONSTRAINT PK_user_roles PRIMARY KEY (UserId, RoleId),
+    CONSTRAINT FK_user_roles_usuarios_UserId FOREIGN KEY (UserId) REFERENCES usuarios(id) ON DELETE CASCADE,
+    CONSTRAINT FK_user_roles_roles_RoleId FOREIGN KEY (RoleId) REFERENCES roles(id) ON DELETE CASCADE
 );
 
-create table preguntas (
-
-	id int auto_increment,
-    encuesta_id int,
-    enunciado varchar(50),
-    tipo_pregunta varchar(50),
-    obligatorio bool,
-    
-	constraint preguntas_PK primary key(id),
-    constraint preguntas_FK foreign key(encuesta_id) references encuestas(id) on update cascade on delete cascade
+CREATE TABLE user_claims (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    UserId INT NOT NULL,
+    ClaimType TEXT,
+    ClaimValue TEXT,
+    CONSTRAINT FK_user_claims_usuarios_UserId FOREIGN KEY (UserId) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
-create table preguntas_opciones (
-
-	id int auto_increment,
-    pregunta_id int,
-    position int,
-    Label varchar(100),
-    Value varchar(100),
-    
-    constraint Choices_PK primary key(id),
-    constraint Choices_FK foreign key(pregunta_id) references preguntas(id) on update cascade on delete cascade
+CREATE TABLE user_logins (
+    LoginProvider VARCHAR(255) NOT NULL,
+    ProviderKey VARCHAR(255) NOT NULL,
+    ProviderDisplayName TEXT,
+    UserId INT NOT NULL,
+    CONSTRAINT PK_user_logins PRIMARY KEY (LoginProvider, ProviderKey),
+    CONSTRAINT FK_user_logins_usuarios_UserId FOREIGN KEY (UserId) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
-create table respuestas(
-
-	id int auto_increment,
-    usuario_respuesta int,
-    encuesta_id int,
-    pregunta_id int,
-    respuesta varchar(100),
-    respuesta_numeros float,
-    fecha_respuesta datetime,
-    seleccion_opcion_id int,
-    
-    constraint respuestas_PK primary key(id),
-    constraint respuestas_FK1 foreign key(encuesta_id) references encuestas(id) on update cascade on delete cascade,
-    constraint respuestas_FK2 foreign key(pregunta_id) references preguntas(id) on update cascade on delete cascade,
-    constraint respuestas_FK3 foreign key(seleccion_opcion_id) references preguntas_opciones(id) on update cascade on delete cascade,
-    constraint respuestas_FK4 foreign key(usuario_respuesta) references usuarios(id) on update cascade on delete cascade
-
+CREATE TABLE user_tokens (
+    UserId INT NOT NULL,
+    LoginProvider VARCHAR(255) NOT NULL,
+    Name VARCHAR(255) NOT NULL,
+    Value TEXT,
+    CONSTRAINT PK_user_tokens PRIMARY KEY (UserId, LoginProvider, Name),
+    CONSTRAINT FK_user_tokens_usuarios_UserId FOREIGN KEY (UserId) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
-create table respuestas_opciones (
-
-	respuesta_id int,
-    opcion int,
-    
-    constraint respuestas_opciones_PK primary key(respuesta_id, opcion),
-    constraint respuestas_opciones_FK1 foreign key(respuesta_id) references respuestas(id),
-    constraint respuestas_opciones_FK2 foreign key(opcion) references preguntas_opciones(id)
+CREATE TABLE role_claims (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    RoleId INT NOT NULL,
+    ClaimType TEXT,
+    ClaimValue TEXT,
+    CONSTRAINT FK_role_claims_roles_RoleId FOREIGN KEY (RoleId) REFERENCES roles(id) ON DELETE CASCADE
 );
 
--- 1️ Insertar roles
-INSERT INTO roles (id, rol) VALUES
-(1, 'Admin'),
-(2, 'User');
+-- Resto de tus tablas de negocio
+CREATE TABLE encuestas (
+    id INT AUTO_INCREMENT,
+    autor INT,
+    titulo VARCHAR(50),
+    descripcion VARCHAR(200),
+    estado VARCHAR(20),
+    cierra_en DATETIME,
+    creado_en DATETIME,
+    CONSTRAINT encuestas_PK PRIMARY KEY(id),
+    CONSTRAINT encuestas_FK FOREIGN KEY(autor) REFERENCES usuarios(id)
+);
 
--- 2️ Insertar usuarios
-INSERT INTO usuarios (username, rol, passwd) VALUES
-('admin1', 1, 'passAdmin'),
-('user1', 2, 'passUser'),
-('user2', 2, 'passUser2');
+CREATE TABLE preguntas (
+    id INT AUTO_INCREMENT,
+    encuesta_id INT,
+    enunciado VARCHAR(50),
+    tipo_pregunta VARCHAR(50),
+    obligatorio BOOL,
+    CONSTRAINT preguntas_PK PRIMARY KEY(id),
+    CONSTRAINT preguntas_FK FOREIGN KEY(encuesta_id) REFERENCES encuestas(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
 
--- 3️ Insertar encuestas
-INSERT INTO encuestas (autor, titulo, descripcion, estado, cierra_en, creado_en) VALUES
-(1, 'Encuesta de Satisfacción', 'Encuesta para medir la satisfacción del cliente', 'Activa', '2025-12-31 23:59:59', NOW()),
-(2, 'Encuesta de Producto', 'Opiniones sobre el nuevo producto', 'Activa', '2025-11-30 23:59:59', NOW());
+CREATE TABLE preguntas_opciones (
+    id INT AUTO_INCREMENT,
+    pregunta_id INT,
+    position INT,
+    Label VARCHAR(100),
+    Value VARCHAR(100),
+    CONSTRAINT Choices_PK PRIMARY KEY(id),
+    CONSTRAINT Choices_FK FOREIGN KEY(pregunta_id) REFERENCES preguntas(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
 
--- 4️ Insertar preguntas
-INSERT INTO preguntas (encuesta_id, enunciado, tipo_pregunta, obligatorio) VALUES
-(1, '¿Qué tan satisfecho estás con el servicio?', 'Escala', 1),
-(1, '¿Recomendarías nuestro servicio?', 'Sí/No', 1),
-(2, 'Califica el producto del 1 al 5', 'Escala', 1);
+CREATE TABLE respuestas(
+    id INT AUTO_INCREMENT,
+    usuario_respuesta INT,
+    encuesta_id INT,
+    pregunta_id INT,
+    respuesta VARCHAR(100),
+    respuesta_numeros FLOAT,
+    fecha_respuesta DATETIME,
+    seleccion_opcion_id INT,
+    CONSTRAINT respuestas_PK PRIMARY KEY(id),
+    CONSTRAINT respuestas_FK1 FOREIGN KEY(encuesta_id) REFERENCES encuestas(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT respuestas_FK2 FOREIGN KEY(pregunta_id) REFERENCES preguntas(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT respuestas_FK3 FOREIGN KEY(seleccion_opcion_id) REFERENCES preguntas_opciones(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT respuestas_FK4 FOREIGN KEY(usuario_respuesta) REFERENCES usuarios(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
 
--- 5️ Insertar opciones para preguntas cerradas
-INSERT INTO preguntas_opciones (pregunta_id, position, Label, Value) VALUES
-(2, 1, 'Sí', '1'),
-(2, 2, 'No', '0'),
-(3, 1, '1', '1'),
-(3, 2, '2', '2'),
-(3, 3, '3', '3'),
-(3, 4, '4', '4'),
-(3, 5, '5', '5');
+CREATE TABLE respuestas_opciones (
+    respuesta_id INT,
+    opcion INT,
+    CONSTRAINT respuestas_opciones_PK PRIMARY KEY(respuesta_id, opcion),
+    CONSTRAINT respuestas_opciones_FK1 FOREIGN KEY(respuesta_id) REFERENCES respuestas(id),
+    CONSTRAINT respuestas_opciones_FK2 FOREIGN KEY(opcion) REFERENCES preguntas_opciones(id)
+);
 
+-- Solo insertar roles
+INSERT INTO roles (id, rol, name, normalized_name, concurrency_stamp) VALUES
+(1, 'Admin', 'Admin', 'ADMIN', UUID()),
+(2, 'User', 'User', 'USER', UUID());
+
+-- NO INSERTAR USUARIOS - SE CREARÁN MEDIANTE LA APLICACIÓN

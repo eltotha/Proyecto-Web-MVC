@@ -1,15 +1,15 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using GestorEncuestas_MVC.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace GestorEncuestas_MVC.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<Usuario, Rol, int>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
 
-        public DbSet<Rol> Roles { get; set; }
-        public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Encuesta> Encuestas { get; set; }
         public DbSet<Pregunta> Preguntas { get; set; }
         public DbSet<PreguntaOpcion> PreguntasOpciones { get; set; }
@@ -20,14 +20,104 @@ namespace GestorEncuestas_MVC.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configurar nombres de tablas
-            modelBuilder.Entity<Encuesta>().ToTable("encuestas");
-            modelBuilder.Entity<Pregunta>().ToTable("preguntas");
-            modelBuilder.Entity<PreguntaOpcion>().ToTable("preguntas_opciones");
-            modelBuilder.Entity<Respuesta>().ToTable("respuestas");
-            modelBuilder.Entity<RespuestaOpcion>().ToTable("respuestas_opciones");
+            // Configurar nombres de tablas para Identity (personalizadas)
             modelBuilder.Entity<Usuario>().ToTable("usuarios");
             modelBuilder.Entity<Rol>().ToTable("roles");
+            
+            // Configurar nombres de tablas para las tablas de Identity
+            modelBuilder.Entity<IdentityUserClaim<int>>().ToTable("user_claims");
+            modelBuilder.Entity<IdentityUserLogin<int>>().ToTable("user_logins");
+            modelBuilder.Entity<IdentityUserToken<int>>().ToTable("user_tokens");
+            modelBuilder.Entity<IdentityRoleClaim<int>>().ToTable("role_claims");
+            modelBuilder.Entity<IdentityUserRole<int>>().ToTable("user_roles");
+
+            // Configurar mapeo de columnas para Usuario (Identity)
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.Id)
+                .HasColumnName("id");
+                
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.UserName)
+                .HasColumnName("username");
+                
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.NormalizedUserName)
+                .HasColumnName("normalized_username");
+                
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.PasswordHash)
+                .HasColumnName("passwd");
+                
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.RolId)
+                .HasColumnName("rol");
+
+            // Mapear propiedades de Identity a las columnas correctas
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.Email)
+                .HasColumnName("email");
+                
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.NormalizedEmail)
+                .HasColumnName("normalized_email");
+                
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.EmailConfirmed)
+                .HasColumnName("email_confirmed");
+                
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.PhoneNumber)
+                .HasColumnName("phone_number");
+                
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.PhoneNumberConfirmed)
+                .HasColumnName("phone_number_confirmed");
+                
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.TwoFactorEnabled)
+                .HasColumnName("two_factor_enabled");
+                
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.LockoutEnd)
+                .HasColumnName("lockout_end");
+                
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.LockoutEnabled)
+                .HasColumnName("lockout_enabled");
+                
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.AccessFailedCount)
+                .HasColumnName("access_failed_count");
+                
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.ConcurrencyStamp)
+                .HasColumnName("concurrency_stamp");
+                
+            modelBuilder.Entity<Usuario>()
+                .Property(u => u.SecurityStamp)
+                .HasColumnName("security_stamp");
+
+            // Configurar mapeo de columnas para Rol (Identity)
+            modelBuilder.Entity<Rol>()
+                .Property(r => r.Id)
+                .HasColumnName("id");
+                
+            modelBuilder.Entity<Rol>()
+                .Property(r => r.DisplayRolNombre)
+                .HasColumnName("rol");
+                
+            // Mapear propiedades esenciales de Identity para Roles
+            modelBuilder.Entity<Rol>()
+                .Property(r => r.Name)
+                .HasColumnName("name");
+                
+            modelBuilder.Entity<Rol>()
+                .Property(r => r.NormalizedName)
+                .HasColumnName("normalized_name");
+                
+            modelBuilder.Entity<Rol>()
+                .Property(r => r.ConcurrencyStamp)
+                .HasColumnName("concurrency_stamp");
 
             // Configurar mapeo de columnas para Encuesta
             modelBuilder.Entity<Encuesta>()
@@ -142,32 +232,6 @@ namespace GestorEncuestas_MVC.Data
                 .Property(ro => ro.OpcionId)
                 .HasColumnName("opcion");
 
-            // Configurar mapeo de columnas para Usuario
-            modelBuilder.Entity<Usuario>()
-                .Property(u => u.Id)
-                .HasColumnName("id");
-                
-            modelBuilder.Entity<Usuario>()
-                .Property(u => u.Username)
-                .HasColumnName("username");
-                
-            modelBuilder.Entity<Usuario>()
-                .Property(u => u.Passwd)
-                .HasColumnName("passwd");
-                
-            modelBuilder.Entity<Usuario>()
-                .Property(u => u.RolId)
-                .HasColumnName("rol");
-
-            // Configurar mapeo de columnas para Rol
-            modelBuilder.Entity<Rol>()
-                .Property(r => r.Id)
-                .HasColumnName("id");
-                
-            modelBuilder.Entity<Rol>()
-                .Property(r => r.RolNombre)
-                .HasColumnName("rol");
-
             // Configurar la tabla intermedia RespuestaOpcion (N:M)
             modelBuilder.Entity<RespuestaOpcion>()
                 .HasKey(ro => new { ro.RespuestaId, ro.OpcionId });
@@ -182,7 +246,7 @@ namespace GestorEncuestas_MVC.Data
                 .WithMany(o => o.RespuestasOpciones)
                 .HasForeignKey(ro => ro.OpcionId);
 
-            // Configurar relaciones adicionales si es necesario
+            // Configurar relaciones adicionales
             modelBuilder.Entity<Encuesta>()
                 .HasOne(e => e.Autor)
                 .WithMany(u => u.EncuestasCreadas)

@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute("Bootstrap5")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("GestorEncuestas_MVC")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e73113b4da15a3885e808d178360627fa429cd8f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+69e24ee35fe6b15859a6bf2b5f22908b46be8992")]
 [assembly: System.Reflection.AssemblyProductAttribute("GestorEncuestas_MVC")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GestorEncuestas_MVC")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

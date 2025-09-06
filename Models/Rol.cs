@@ -1,12 +1,16 @@
-using GestorEncuestas_MVC.Models;
+using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
+
 namespace GestorEncuestas_MVC.Models
 {
-    public class Rol
+    public class Rol : IdentityRole<int>
     {
-        public int Id { get; set; }
-        public string RolNombre { get; set; }
+        [Required]
+        [MaxLength(50)]
+        [Display(Name = "Nombre del rol")]
+        public string DisplayRolNombre { get; set; } = string.Empty;
 
         // Relación 1:N con Usuarios
-        public ICollection<Usuario> Usuarios { get; set; }
+        public ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
     }
 }
