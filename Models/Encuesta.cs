@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace GestorEncuestas_MVC.Models
 {
@@ -19,10 +20,13 @@ namespace GestorEncuestas_MVC.Models
 
         // FK
         public int AutorId { get; set; }
+        [ValidateNever]
         public Usuario Autor { get; set; } = null!;
 
         // Relaciones
+        [ValidateNever]
         public ICollection<Pregunta> Preguntas { get; set; } = new List<Pregunta>();
+        [ValidateNever]
         public ICollection<Respuesta> Respuestas { get; set; } = new List<Respuesta>();
     }
 }
