@@ -75,7 +75,7 @@ namespace GestorEncuestas_MVC.Controllers
         // POST: Encuestas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Titulo,Descripcion,Estado,CierraEn")] Encuesta encuesta)
+        public async Task<IActionResult> CreateForm([Bind("Titulo,Descripcion,Estado,CierraEn")] Encuesta encuesta)
         {
             if (ModelState.IsValid)
             {
@@ -199,7 +199,7 @@ namespace GestorEncuestas_MVC.Controllers
                 return NotFound();
             }
 
-            return View(encuesta);
+           return View("Create", encuesta);
         }
 
         // POST: Encuestas/Delete/5
