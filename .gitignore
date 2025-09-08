@@ -5,3 +5,4 @@ obj/
 *.exe
 *.cache
 
+bin/\nobj/\n*.dll\n*.pdb\n*.exe\n*.cache
