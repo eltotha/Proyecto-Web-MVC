@@ -1,0 +1,15 @@
+#Build things
+bin/
+obj/
+
+#Visual studio
+.vs/
+.vscode/
+
+#ASP
+.dll
+.exe
+.pdb
+.cache
+.log
+
