@@ -280,9 +280,19 @@ namespace GestorEncuestas_MVC.Controllers
                 pregunta.EncuestaId = encuestaId;
                 _context.Add(pregunta);
                 await _context.SaveChangesAsync();
-                
+
                 TempData["SuccessMessage"] = "Pregunta agregada exitosamente.";
                 return RedirectToAction(nameof(Details), new { id = encuestaId });
+            }
+            else
+            {
+                foreach (var kvp in ModelState)
+                {
+                    if (kvp.Value.Errors.Count > 0)
+                    {
+                        Console.WriteLine($"{kvp.Key}: {string.Join(", ", kvp.Value.Errors.Select(e => e.ErrorMessage))}");
+                    }
+                }
             }
             
             ViewData["EncuestaId"] = encuestaId;
