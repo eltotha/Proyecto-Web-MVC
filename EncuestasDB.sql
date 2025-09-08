@@ -140,3 +140,6 @@ INSERT INTO roles (id, rol, name, normalized_name, concurrency_stamp) VALUES
 (2, 'User', 'User', 'USER', UUID());
 
 -- NO INSERTAR USUARIOS - SE CREARÁN MEDIANTE LA APLICACIÓN
+
+use encuestas;
+select * from encuestas;
