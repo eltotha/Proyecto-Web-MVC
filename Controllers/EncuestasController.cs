@@ -140,6 +140,7 @@ namespace GestorEncuestas_MVC.Controllers
             
             // Verificar que la encuesta pertenece al usuario actual
             var encuestaExistente = await _context.Encuestas
+                .AsNoTracking()
                 .FirstOrDefaultAsync(e => e.Id == id && e.AutorId == usuarioActual.Id);
                 
             if (encuestaExistente == null)
@@ -154,10 +155,10 @@ namespace GestorEncuestas_MVC.Controllers
                     // Mantener los valores originales que no se editan
                     encuesta.AutorId = usuarioActual.Id;
                     encuesta.CreadoEn = encuestaExistente.CreadoEn;
-                    
+
                     _context.Update(encuesta);
                     await _context.SaveChangesAsync();
-                    
+
                     TempData["SuccessMessage"] = "Encuesta actualizada exitosamente.";
                 }
                 catch (DbUpdateConcurrencyException)
@@ -173,6 +174,19 @@ namespace GestorEncuestas_MVC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            else
+            {
+                Console.WriteLine("[DEBUG] ModelState inválido. Errores:");
+                foreach (var entry in ModelState)
+                {
+                    if (entry.Value.Errors.Count > 0)
+                    {
+                        Console.WriteLine($" - {entry.Key}: {string.Join(", ", entry.Value.Errors.Select(e => e.ErrorMessage))}");
+                    }
+                }
+                return View(encuesta);
+            }
+
             return View(encuesta);
         }
 
