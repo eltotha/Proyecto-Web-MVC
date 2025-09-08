@@ -2,11 +2,22 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using GestorEncuestas_MVC.Data;
 using GestorEncuestas_MVC.Models;
+using GestorEncuestas_MVC.Services; // ✅ AÑADIR este using
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson; // ✅ AÑADIR este using
+using Newtonsoft.Json; // ✅ AÑADIR este using
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// ✅ AÑADIR Configuración para la API de exportación Excel
+builder.Services.AddScoped<IExcelExportService, ExcelExportService>();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+    });
 
 // Configurar Entity Framework con MySQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -92,6 +103,9 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseSession();
+
+// ✅ AÑADIR Mapeo de controladores API (IMPORTANTE para que funcionen los endpoints API)
+app.MapControllers();
 
 // Crear roles iniciales y usuario admin (solo en desarrollo)
 if (app.Environment.IsDevelopment())

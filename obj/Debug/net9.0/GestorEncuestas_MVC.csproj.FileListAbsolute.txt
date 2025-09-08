@@ -532,3 +532,14 @@ C:\xampp\htdocs\MVC\Proyecto_Web_MVC\obj\Debug\net9.0\refint\GestorEncuestas_MVC
 C:\xampp\htdocs\MVC\Proyecto_Web_MVC\obj\Debug\net9.0\GestorEncuestas_MVC.pdb
 C:\xampp\htdocs\MVC\Proyecto_Web_MVC\obj\Debug\net9.0\GestorEncuestas_MVC.genruntimeconfig.cache
 C:\xampp\htdocs\MVC\Proyecto_Web_MVC\obj\Debug\net9.0\ref\GestorEncuestas_MVC.dll
+C:\xampp\htdocs\MVC\Proyecto_Web_MVC\bin\Debug\net9.0\ClosedXML.dll
+C:\xampp\htdocs\MVC\Proyecto_Web_MVC\bin\Debug\net9.0\DocumentFormat.OpenXml.dll
+C:\xampp\htdocs\MVC\Proyecto_Web_MVC\bin\Debug\net9.0\ExcelNumberFormat.dll
+C:\xampp\htdocs\MVC\Proyecto_Web_MVC\bin\Debug\net9.0\Irony.dll
+C:\xampp\htdocs\MVC\Proyecto_Web_MVC\bin\Debug\net9.0\Microsoft.AspNetCore.JsonPatch.dll
+C:\xampp\htdocs\MVC\Proyecto_Web_MVC\bin\Debug\net9.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+C:\xampp\htdocs\MVC\Proyecto_Web_MVC\bin\Debug\net9.0\Newtonsoft.Json.dll
+C:\xampp\htdocs\MVC\Proyecto_Web_MVC\bin\Debug\net9.0\Newtonsoft.Json.Bson.dll
+C:\xampp\htdocs\MVC\Proyecto_Web_MVC\bin\Debug\net9.0\SixLabors.Fonts.dll
+C:\xampp\htdocs\MVC\Proyecto_Web_MVC\bin\Debug\net9.0\System.IO.Packaging.dll
+C:\xampp\htdocs\MVC\Proyecto_Web_MVC\bin\Debug\net9.0\XLParser.dll
